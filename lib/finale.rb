@@ -3,7 +3,7 @@ require "rest-client"
 require "finale/version"
 require "finale/errors"
 require "finale/order"
-require "finale/version"
+require "finale/shipment"
 
 module Finale
   class Client
