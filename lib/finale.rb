@@ -1,4 +1,5 @@
 require "rest-client"
+require "json"
 
 require "finale/version"
 require "finale/errors"
