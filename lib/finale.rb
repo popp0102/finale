@@ -1,6 +1,5 @@
 require "rest-client"
 require "json"
-require "pry"
 
 require "finale/version"
 require "finale/errors"
@@ -12,10 +11,10 @@ module Finale
     MAX_REQUESTS = 100 # Finale API Usage: 'https://support.finaleinventory.com/hc/en-us/articles/115007830648-Getting-Started'
     BASE_URL     = 'https://app.finaleinventory.com'
 
-    def initialize(company)
+    def initialize(account)
       @cookies       = nil
       @request_count = 0
-      @company       = company
+      @account       = account
       @login_url     = construct_url(:auth)
       @order_url     = construct_url(:order)
       @shipment_url  = construct_url(:shipment)
@@ -52,7 +51,7 @@ module Finale
     private
 
     def construct_url(resource)
-      "#{BASE_URL}/#{@company}/api/#{resource}"
+      "#{BASE_URL}/#{@account}/api/#{resource}"
     end
 
     def request(verb: nil, url: nil, payload: nil)
