@@ -1,3 +1,8 @@
+[![Version      ](https://img.shields.io/gem/v/finale.svg?maxAge=2592000)](https://rubygems.org/gems/finale)
+[![Build Status ](https://travis-ci.org/popp0102/finale.svg)](https://travis-ci.org/popp0102/finale)
+[![Code Climate ](https://api.codeclimate.com/v1/badges/7c7d7c83bde6c288f5e8/maintainability)](https://codeclimate.com/github/popp0102/finale/maintainability)
+[![Test Coverage](https://codeclimate.com/github/popp0102/finale/badges/coverage.svg)](https://codeclimate.com/github/popp0102/finale/coverage)
+
 # Finale
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/finale`. To experiment with that code, run `bin/console` for an interactive prompt.
