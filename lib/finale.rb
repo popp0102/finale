@@ -41,7 +41,7 @@ module Finale
     end
 
     def get_shipments(order)
-      order.shipment_urls.map do |suffix_url|
+      order.shipmentUrlList.map do |suffix_url|
         url      = "#{BASE_URL}#{suffix_url}"
         response = request(verb: :GET, url: url)
         Shipment.new(response)

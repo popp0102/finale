@@ -100,8 +100,8 @@ RSpec.describe Finale::Client do
         stub_request(:get, "#{base_url}#{suffix_2}").to_return(status: 200, body: shipment_response_2.to_json)
       end
 
-      let(:suffix_1) { order.shipment_urls[0] }
-      let(:suffix_2) { order.shipment_urls[1] }
+      let(:suffix_1) { order.shipmentUrlList[0] }
+      let(:suffix_2) { order.shipmentUrlList[1] }
 
       let(:shipment_id_1) { '11111' }
       let(:shipment_id_2) { '11112' }

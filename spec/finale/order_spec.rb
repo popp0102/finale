@@ -9,17 +9,16 @@ RSpec.describe Finale::Order do
     it { expect{subject}.to_not raise_error }
 
     it 'should have an id' do
-      expect(subject.id).to be_an(Integer)
+      expect(subject.orderId).to be_an(String)
     end
 
     it 'should have a source' do
-      expect(subject.source).to be_a(String)
+      expect(subject.saleSourceId).to be_a(String)
     end
 
     it 'should have shipment_urls' do
-      expect(subject.shipment_urls).to be_an(Array)
+      expect(subject.shipmentUrlList).to be_an(Array)
     end
-
   end
 end
 

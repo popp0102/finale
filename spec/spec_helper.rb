@@ -1,6 +1,7 @@
 require "bundler/setup"
 require "factory_bot"
 require "webmock/rspec"
+require 'pry'
 
 require "finale"
 
