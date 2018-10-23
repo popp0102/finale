@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Finale::Order do
-  let(:order_response) { build(:finale_order_response) }
+  let(:order_response) { build(:order_response) }
 
   describe '#initialize' do
     subject { Finale::Order.new(order_response) }

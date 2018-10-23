@@ -7,7 +7,7 @@ RSpec.describe Finale::Client do
   let(:order_url)      { client.instance_variable_get(:@order_url) }
   let(:login_url)      { client.instance_variable_get(:@login_url) }
   let(:login_headers)  { { 'Set-Cookie' =>  'JSESSIONID=some_session_id' } }
-  let(:login_response) { build(:finale_login_response) }
+  let(:login_response) { build(:login_response) }
 
   before(:each) do
     stub_request(:post, login_url).to_return(status: 200, body: login_response.to_json, headers: login_headers)
@@ -63,7 +63,7 @@ RSpec.describe Finale::Client do
     describe '#get_order_ids' do
       subject { client.get_order_ids }
 
-      let(:order_ids_response) { build(:finale_order_ids_response) }
+      let(:order_ids_response) { build(:order_ids_response) }
 
       before(:each) do
         stub_request(:get, order_url).to_return(status: 200, body: order_ids_response.to_json)
@@ -85,8 +85,8 @@ RSpec.describe Finale::Client do
       end
 
       let(:order_id) { "12345" }
-      let(:order_ids) { build(:finale_order_ids_response, id: order_id) }
-      let(:order_response) { build(:finale_order_response, id: order_id) }
+      let(:order_ids) { build(:order_ids_response, id: order_id) }
+      let(:order_response) { build(:order_response, id: order_id) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Finale::Order) }
@@ -106,10 +106,10 @@ RSpec.describe Finale::Client do
       let(:shipment_id_1) { '11111' }
       let(:shipment_id_2) { '11112' }
 
-      let(:shipment_response_1) { build(:finale_shipment_response, id: shipment_id_1) }
-      let(:shipment_response_2) { build(:finale_shipment_response, id: shipment_id_2) }
+      let(:shipment_response_1) { build(:shipment_response, id: shipment_id_1) }
+      let(:shipment_response_2) { build(:shipment_response, id: shipment_id_2) }
 
-      let(:order) { build(:finale_order, shipment_id1: shipment_id_1, shipment_id2: shipment_id_2) }
+      let(:order) { build(:order, shipment_id1: shipment_id_1, shipment_id2: shipment_id_2) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Array) }

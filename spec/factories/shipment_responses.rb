@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :finale_shipment_response, class: Hash do
+  factory :shipment_response, class: Hash do
     id { '10208' }
 
     initialize_with do

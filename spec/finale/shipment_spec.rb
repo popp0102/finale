@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Finale::Shipment do
-  let(:shipment_response) { build(:finale_shipment_response) }
+  let(:shipment_response) { build(:shipment_response) }
 
   describe '#initialize' do
     subject { Finale::Shipment.new(shipment_response) }

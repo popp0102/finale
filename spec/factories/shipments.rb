@@ -1,6 +1,6 @@
 FactoryBot.define do
-  factory :finale_shipment, class: Finale::Shipment do
-    shipment_response { build(:finale_shipment_response) }
+  factory :shipment, class: Finale::Shipment do
+    shipment_response { build(:shipment_response) }
 
     initialize_with do
      new(shipment_response)

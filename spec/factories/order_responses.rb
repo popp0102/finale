@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :finale_order_response, class: Hash do
+  factory :order_response, class: Hash do
     id { '100001' }
     shipment_id1 { '10208' }
     shipment_id2 { '10209' }
@@ -13,7 +13,7 @@ FactoryBot.define do
     end
   end
 
-  factory :finale_order_ids_response, class: Hash do
+  factory :order_ids_response, class: Hash do
     order_id1 { '100001' }
     order_id2 { '100002' }
     order_id3 { '100003' }
