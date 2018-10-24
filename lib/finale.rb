@@ -1,5 +1,7 @@
 require "rest-client"
 require "json"
+require "base64"
+require "active_support"
 
 require "finale/version"
 require "finale/errors"
@@ -74,7 +76,7 @@ module Finale
       "#{BASE_URL}/#{@account}/api/#{resource}"
     end
 
-    def request(verb: nil, url: nil, payload: nil)
+    def request(verb: nil, url: nil, payload: nil, filter: nil)
       raise MaxRequests.new(MAX_REQUESTS) if @request_count >= MAX_REQUESTS
       raise NotLoggedIn.new(verb: verb, url: url) unless verb == :LOGIN || !@cookies.nil?
 
@@ -83,7 +85,10 @@ module Finale
         response = RestClient.post(@login_url, payload)
         @cookies = response.cookies
       when :GET
-        response = RestClient.get(url, cookies: @cookies)
+        params = { cookies: @cookies }
+        params.merge!(filter: Base64.encode64(filter)) unless filter.nil?
+
+        response = RestClient.get(url, params)
       when :POST
         response = RestClient.post(url, cookies: @cookies)
       end
