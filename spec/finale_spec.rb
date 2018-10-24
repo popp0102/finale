@@ -92,6 +92,19 @@ RSpec.describe Finale::Client do
       it { is_expected.to be_a(Finale::Order) }
     end
 
+    describe '#get_orders' do
+      subject { client.get_orders }
+
+      before(:each) do
+        stub_request(:get, /#{order_url}/).to_return(status: 200, body: order_collection.to_json)
+      end
+
+      let(:order_collection) { build(:order_collection) }
+
+      it { expect{subject}.to_not raise_error }
+      it { is_expected.to all(be_a(Finale::Order)) }
+    end
+
     describe '#get_shipments' do
       subject { client.get_shipments(order) }
 
@@ -113,10 +126,7 @@ RSpec.describe Finale::Client do
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Array) }
-
-      it 'should collect all shipments for the order' do
-        expect(subject).to all(be_a(Finale::Shipment))
-      end
+      it { is_expected.to all(be_a(Finale::Shipment)) }
     end
   end
 end

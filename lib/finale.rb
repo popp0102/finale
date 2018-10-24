@@ -40,6 +40,13 @@ module Finale
       Order.new(response)
     end
 
+    def get_orders
+      response = request(verb: :GET, url: @order_url)
+      rows     = column_major_to_row_major(response)
+      orders   = rows.map { |r| Order.new(r) }
+      orders
+    end
+
     def get_shipments(order)
       order.shipmentUrlList.map do |suffix_url|
         url      = "#{BASE_URL}#{suffix_url}"
@@ -49,6 +56,19 @@ module Finale
     end
 
     private
+
+    def column_major_to_row_major(column_major)
+      row_major = []
+      keys      = column_major.keys
+      values    = column_major.values
+      num_cols  = values.first.count
+      num_cols.times do
+        rowvals   = keys.map { |key| column_major[key].shift }
+        row       = Hash[keys.zip(rowvals)]
+        row_major << row
+      end
+      row_major
+    end
 
     def construct_url(resource)
       "#{BASE_URL}/#{@account}/api/#{resource}"
