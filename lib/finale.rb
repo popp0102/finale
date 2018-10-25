@@ -42,8 +42,8 @@ module Finale
       Order.new(response)
     end
 
-    def get_orders(from: 1.days.ago.utc, to: Time.now.utc)
-      resp_orders = request(verb: :GET, url: @order_url, filter: { lastUpdatedDate: [from, to] })
+    def get_orders(filter: nil)
+      resp_orders = request(verb: :GET, url: @order_url, filter: filter )
       rows        = column_major_to_row_major(resp_orders)
       orders      = rows.map { |r| Order.new(r) }
       orders
