@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency 'pry-byebug', '~> 3'
   spec.add_development_dependency "factory_bot", "~> 4.10"
+  spec.add_development_dependency "simplecov", "~> 0.16"
 end
