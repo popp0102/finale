@@ -1,7 +1,7 @@
 require "rest-client"
 require "json"
 require "base64"
-require "active_support"
+require "active_support/all"
 
 require "finale/version"
 require "finale/errors"
@@ -42,10 +42,10 @@ module Finale
       Order.new(response)
     end
 
-    def get_orders
-      response = request(verb: :GET, url: @order_url)
-      rows     = column_major_to_row_major(response)
-      orders   = rows.map { |r| Order.new(r) }
+    def get_orders(from: 1.days.ago.utc, to: Time.now.utc)
+      resp_orders = request(verb: :GET, url: @order_url, filter: { lastUpdatedDate: [from, to] })
+      rows        = column_major_to_row_major(resp_orders)
+      orders      = rows.map { |r| Order.new(r) }
       orders
     end
 
@@ -62,8 +62,8 @@ module Finale
     def column_major_to_row_major(column_major)
       row_major = []
       keys      = column_major.keys
-      values    = column_major.values
-      num_cols  = values.first.count
+      values    = column_major.values || [[]]
+      num_cols  = values.count == 0 ? 0 : values.first.count
       num_cols.times do
         rowvals   = keys.map { |key| column_major[key].shift }
         row       = Hash[keys.zip(rowvals)]
@@ -85,10 +85,14 @@ module Finale
         response = RestClient.post(@login_url, payload)
         @cookies = response.cookies
       when :GET
-        params = { cookies: @cookies }
-        params.merge!(filter: Base64.encode64(filter)) unless filter.nil?
+        params = {}
 
-        response = RestClient.get(url, params)
+        if filter.present?
+          encoded_filter = Base64.encode64(filter.to_json)
+          params.merge!(filter: encoded_filter)
+        end
+
+        response = RestClient.get(url, cookies: @cookies, params: params)
       when :POST
         response = RestClient.post(url, cookies: @cookies)
       end
