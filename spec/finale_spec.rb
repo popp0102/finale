@@ -60,23 +60,6 @@ RSpec.describe Finale::Client do
       client.login
     end
 
-    describe '#get_order_ids' do
-      subject { client.get_order_ids }
-
-      let(:order_ids_response) { build(:order_ids_response) }
-
-      before(:each) do
-        stub_request(:get, order_url).to_return(status: 200, body: order_ids_response.to_json)
-      end
-
-      it { expect{subject}.to_not raise_error }
-      it { is_expected.to be_a(Array) }
-
-      it 'should be the orderId portion of the order resource returned' do
-        expect(subject).to include(*(order_ids_response[:orderId].map(&:to_i)))
-      end
-    end
-
     describe '#get_order' do
       subject { client.get_order(order_id) }
 

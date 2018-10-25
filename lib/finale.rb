@@ -31,12 +31,6 @@ module Finale
       request(verb: :LOGIN, payload: payload)
     end
 
-    def get_order_ids
-      body      = request(verb: :GET, url: @order_url)
-      order_ids = body[:orderId]
-      order_ids.map(&:to_i).sort.uniq
-    end
-
     def get_order(id)
       response = request(verb: :GET, url: "#{@order_url}/#{id}")
       Order.new(response)
