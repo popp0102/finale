@@ -43,5 +43,57 @@ FactoryBot.define do
       }
     end
   end
+
+  factory :shipment_collection, class: Hash do
+    account      { 'some_account' }
+    shipment_id1 { '10001' }
+    shipment_id2 { '10002' }
+
+    initialize_with do
+      {
+        shipmentId: [shipment_id1, shipment_id2],
+        shipmentIdUser: ["some_shipment_user_id-1", "some_shipment_user_id-2"],
+        shipmentUrl: ["/#{account}/api/shipment/#{shipment_id1}", "/#{account}/api/shipment/#{shipment_id2}"],
+        shipmentTypeId: ["SALES_SHIPMENT", "SALES_SHIPMENT"],
+        primaryOrderUrl: ["/#{account}/api/order/some_shipment_user_id", "/#{account}/api/order/some_shipment_user_id"],
+        statusId: ["SHIPMENT_SHIPPED", "SHIPMENT_SHIPPED"],
+        packDate: ["2016-09-26T18:00:00", "2016-09-26T18:00:00"],
+        shipDate: ["2016-09-26T18:00:00", "2016-09-26T18:00:00"],
+        userFieldDataList: [],
+        shipmentItemList: [
+          [{
+            lotId: "L_F0BBBBB-U0",
+            facilityUrl: "/#{account}/api/facility/10022",
+            productId: "some_product_id",
+            productUrl: "/#{account}/api/product/some_product_id",
+            quantity: 1
+          }],
+          [{
+            lotId: "L_F0CCCCC-U0",
+            facilityUrl: "/#{account}/api/facility/10022",
+            productId: "some_product_id",
+            productUrl: "/#{account}/api/product/some_product_id",
+            quantity: 1
+          }]
+        ],
+        transferList: [[], []],
+        statusIdHistoryList: [[], []],
+        destinationFacilityUrl: [nil, nil],
+        originFacilityUrl: ["/#{account}/api/facility/200", "/#{account}/api/facility/200"],
+        receiveDate: ['2018-01-19T14:51:20', '2018-01-20T14:51:20'],
+        facilityUrlPack: ["/#{account}/api/facility/10022", "/#{account}/api/facility/10022"],
+        contentList: [[], []],
+        createdDate: ['2017-07-19T14:51:20', '2017-07-20T14:51:20'],
+        lastUpdatedDate: ['2018-07-19T14:51:20', '2018-07-20T14:51:20'],
+        unpackDate: ['2018-07-19T14:51:20', '2018-07-20T14:51:20'],
+        primaryReturnUrl: [nil, nil],
+        receiveDateEstimated: [nil, nil],
+        countPackages: [1, 1],
+        trackingCode: ['some_tracking_code_1', 'some_tracking_code_2'],
+        shipDateEstimated: ["2016-09-26T18:00:00", "2016-09-26T18:00:00"],
+        externalUrl: [nil, nil],
+      }
+    end
+  end
 end
 

@@ -5,6 +5,7 @@ RSpec.describe Finale::Client do
   let(:client)         { Finale::Client.new('some_account') }
   let(:base_url)       { Finale::Client::BASE_URL }
   let(:order_url)      { client.instance_variable_get(:@order_url) }
+  let(:shipment_url)      { client.instance_variable_get(:@shipment_url) }
   let(:login_url)      { client.instance_variable_get(:@login_url) }
   let(:login_headers)  { { 'Set-Cookie' =>  'JSESSIONID=some_session_id' } }
   let(:login_response) { build(:login_response) }
@@ -96,7 +97,27 @@ RSpec.describe Finale::Client do
     end
 
     describe '#get_shipments' do
-      subject { client.get_shipments(order) }
+      subject { client.get_shipments(filter: filter) }
+
+      before(:each) do
+        stub_request(:get, /#{shipment_url}/).to_return(status: 200, body: shipment_collection.to_json)
+      end
+
+      let(:shipment_collection) { build(:shipment_collection) }
+      let(:filter) { nil }
+
+      it { expect{subject}.to_not raise_error }
+      it { is_expected.to all(be_a(Finale::Shipment)) }
+
+      context 'with lastUpdatedDate filter' do
+        let(:filter) { {lastUpdatedDate: [1.days.ago, Time.now]} }
+
+        it { expect{subject}.to_not raise_error }
+      end
+    end
+
+    describe '#get_shipments_from_order' do
+      subject { client.get_shipments_from_order(order) }
 
       before(:each) do
         stub_request(:get, "#{base_url}#{suffix_1}").to_return(status: 200, body: shipment_response_1.to_json)

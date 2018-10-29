@@ -43,7 +43,14 @@ module Finale
       orders
     end
 
-    def get_shipments(order)
+    def get_shipments(filter: nil)
+      resp_shipments = request(verb: :GET, url: @shipment_url, filter: filter )
+      rows           = column_major_to_row_major(resp_shipments)
+      shipments      = rows.map { |r| Shipment.new(r) }
+      shipments
+    end
+
+    def get_shipments_from_order(order)
       order.shipmentUrlList.map do |suffix_url|
         url      = "#{BASE_URL}#{suffix_url}"
         response = request(verb: :GET, url: url)
