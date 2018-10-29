@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :shipment_response, class: Hash do
     id { '11069' }
+    lot_id1 { 'L_F0BBBBB-U0' }
+    lot_id2 { 'L_F00CCCC-U0' }
 
     initialize_with do
       {
@@ -23,14 +25,14 @@ FactoryBot.define do
         userFieldDataList: [],
         shipmentItemList: [
           {
-            lotId: "L_F0BBBBB-U0",
+            lotId: lot_id1,
             facilityUrl: "/account/api/facility/10022",
             productId: "some_product_id",
             productUrl: "/account/api/product/some_product_id",
             quantity: 1
           },
           {
-            lotId: "L_F00CCCC-U0",
+            lotId: lot_id2,
             facilityUrl: "/account/api/facility/10022",
             productId: "some_product_id",
             productUrl: "/account/api/product/some_product_id",
