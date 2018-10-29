@@ -50,6 +50,10 @@ module Finale
       shipments
     end
 
+    def get_order_from_shipment(shipment)
+      get_order(shipment.order_id)
+    end
+
     def get_shipments_from_order(order)
       order.shipmentUrlList.map do |suffix_url|
         url      = "#{BASE_URL}#{suffix_url}"

@@ -139,6 +139,20 @@ RSpec.describe Finale::Client do
       it { is_expected.to be_a(Array) }
       it { is_expected.to all(be_a(Finale::Shipment)) }
     end
+
+    describe '#get_order_from_shipment' do
+      subject { client.get_order_from_shipment(shipment) }
+
+      before(:each) do
+        stub_request(:get, /#{order_url}/).to_return(status: 200, body: order.to_json)
+      end
+
+      let(:order) { build(:order) }
+      let(:shipment) { build(:shipment, order_id: order.orderId) }
+
+      it { expect{subject}.to_not raise_error }
+      it { is_expected.to be_a(Finale::Order) }
+    end
   end
 end
 

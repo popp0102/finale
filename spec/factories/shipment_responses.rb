@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :shipment_response, class: Hash do
     id       { '11069' }
+    account  { 'some_account' }
     order_id { '44444' }
     lot_id1  { 'L_F0BBBBB-U0' }
     lot_id2  { 'L_F00CCCC-U0' }
@@ -9,34 +10,34 @@ FactoryBot.define do
       {
         shipmentId: "#{id}",
         shipmentIdUser: "some_shipment_user_id-1",
-        shipmentUrl: "/account/api/shipment/#{id}",
+        shipmentUrl: "/#{account}/api/shipment/#{id}",
         shipmentTypeId: "SALES_SHIPMENT",
-        actionUrlCancel: "/account/api/shipment/#{id}/cancel",
-        actionUrlPack: "/account/api/shipment/#{id}/pack",
-        actionUrlUnpack: "/account/api/shipment/#{id}/unpack",
-        actionUrlShip: "/account/api/shipment/#{id}/ship",
-        actionUrlTransfer: "/account/api/shipment/#{id}/transfer",
-        primaryOrderUrl: "/account/api/order/#{order_id}",
+        actionUrlCancel: "/#{account}/api/shipment/#{id}/cancel",
+        actionUrlPack: "/#{account}/api/shipment/#{id}/pack",
+        actionUrlUnpack: "/#{account}/api/shipment/#{id}/unpack",
+        actionUrlShip: "/#{account}/api/shipment/#{id}/ship",
+        actionUrlTransfer: "/#{account}/api/shipment/#{id}/transfer",
+        primaryOrderUrl: "/#{account}/api/order/#{order_id}",
         statusId: "SHIPMENT_SHIPPED",
         packDate: "2016-09-26T18:00:00",
         shipDate: "2016-09-26T18:00:00",
         lastUpdatedDate: "2018-07-30T17:57:29",
         createdDate: "2018-07-30T17:56:59",
-        facilityUrlPack: "/account/api/facility/10022",
+        facilityUrlPack: "/#{account}/api/facility/10022",
         userFieldDataList: [],
         shipmentItemList: [
           {
             lotId: lot_id1,
-            facilityUrl: "/account/api/facility/10022",
+            facilityUrl: "/#{account}/api/facility/10022",
             productId: "some_product_id",
-            productUrl: "/account/api/product/some_product_id",
+            productUrl: "/#{account}/api/product/some_product_id",
             quantity: 1
           },
           {
             lotId: lot_id2,
-            facilityUrl: "/account/api/facility/10022",
+            facilityUrl: "/#{account}/api/facility/10022",
             productId: "some_product_id",
-            productUrl: "/account/api/product/some_product_id",
+            productUrl: "/#{account}/api/product/some_product_id",
             quantity: 1
           }
         ],

@@ -27,5 +27,16 @@ RSpec.describe Finale::Shipment do
       it { expect(subject).to eq([lot_id1]) }
     end
   end
+
+  describe '#order_id' do
+    subject { shipment.order_id }
+
+    let(:order_id) { 'some_order_id' }
+    let(:shipment_response) { build(:shipment_response, order_id: order_id) }
+    let(:shipment) { Finale::Shipment.new(shipment_response) }
+
+    it { expect{subject}.to_not raise_error }
+    it { expect(subject).to eq(order_id) }
+  end
 end
 
