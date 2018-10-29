@@ -76,16 +76,23 @@ RSpec.describe Finale::Client do
     end
 
     describe '#get_orders' do
-      subject { client.get_orders }
+      subject { client.get_orders(filter: filter) }
 
       before(:each) do
         stub_request(:get, /#{order_url}/).to_return(status: 200, body: order_collection.to_json)
       end
 
       let(:order_collection) { build(:order_collection) }
+      let(:filter) { nil }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to all(be_a(Finale::Order)) }
+
+      context 'with lastUpdatedDate filter' do
+        let(:filter) { {lastUpdatedDate: [1.days.ago, Time.now]} }
+
+        it { expect{subject}.to_not raise_error }
+      end
     end
 
     describe '#get_shipments' do
