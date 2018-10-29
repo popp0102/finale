@@ -1,8 +1,9 @@
 FactoryBot.define do
   factory :shipment_response, class: Hash do
-    id { '11069' }
-    lot_id1 { 'L_F0BBBBB-U0' }
-    lot_id2 { 'L_F00CCCC-U0' }
+    id       { '11069' }
+    order_id { '44444' }
+    lot_id1  { 'L_F0BBBBB-U0' }
+    lot_id2  { 'L_F00CCCC-U0' }
 
     initialize_with do
       {
@@ -15,7 +16,7 @@ FactoryBot.define do
         actionUrlUnpack: "/account/api/shipment/#{id}/unpack",
         actionUrlShip: "/account/api/shipment/#{id}/ship",
         actionUrlTransfer: "/account/api/shipment/#{id}/transfer",
-        primaryOrderUrl: "/account/api/order/some_shipment_user_id",
+        primaryOrderUrl: "/account/api/order/#{order_id}",
         statusId: "SHIPMENT_SHIPPED",
         packDate: "2016-09-26T18:00:00",
         shipDate: "2016-09-26T18:00:00",
@@ -48,8 +49,9 @@ FactoryBot.define do
 
   factory :shipment_collection, class: Hash do
     account      { 'some_account' }
-    shipment_id1 { '10001' }
-    shipment_id2 { '10002' }
+    order_id     { '11111' }
+    shipment_id1 { '22222' }
+    shipment_id2 { '33333' }
 
     initialize_with do
       {
@@ -57,7 +59,7 @@ FactoryBot.define do
         shipmentIdUser: ["some_shipment_user_id-1", "some_shipment_user_id-2"],
         shipmentUrl: ["/#{account}/api/shipment/#{shipment_id1}", "/#{account}/api/shipment/#{shipment_id2}"],
         shipmentTypeId: ["SALES_SHIPMENT", "SALES_SHIPMENT"],
-        primaryOrderUrl: ["/#{account}/api/order/some_shipment_user_id", "/#{account}/api/order/some_shipment_user_id"],
+        primaryOrderUrl: ["/#{account}/api/order/#{order_id}", "/#{account}/api/order/#{order_id}"],
         statusId: ["SHIPMENT_SHIPPED", "SHIPMENT_SHIPPED"],
         packDate: ["2016-09-26T18:00:00", "2016-09-26T18:00:00"],
         shipDate: ["2016-09-26T18:00:00", "2016-09-26T18:00:00"],
