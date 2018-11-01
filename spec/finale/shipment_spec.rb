@@ -26,6 +26,13 @@ RSpec.describe Finale::Shipment do
       it { expect{subject}.to_not raise_error }
       it { expect(subject).to eq([lot_id1]) }
     end
+
+    context 'empty shipment item list' do
+      let(:shipment_response) { build(:shipment_response, shipment_item_list: nil) }
+
+      it { expect{subject}.to_not raise_error }
+      it { expect(subject).to eq([]) }
+    end
   end
 
   describe '#order_id' do

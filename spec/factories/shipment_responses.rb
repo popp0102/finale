@@ -3,8 +3,25 @@ FactoryBot.define do
     id       { '11069' }
     account  { 'some_account' }
     order_id { '44444' }
-    lot_id1  { 'L_F0BBBBB-U0' }
-    lot_id2  { 'L_F00CCCC-U0' }
+    shipment_item_list {[
+      {
+        lotId: lot_id1,
+        facilityUrl: "/#{account}/api/facility/10022",
+        productId: "some_product_id",
+        productUrl: "/#{account}/api/product/some_product_id",
+        quantity: 1
+      },
+      {
+        lotId: lot_id2,
+        facilityUrl: "/#{account}/api/facility/10022",
+        productId: "some_product_id",
+        productUrl: "/#{account}/api/product/some_product_id",
+        quantity: 1
+      }
+    ]}
+
+    transient { lot_id1  { 'L_F0BBBBB-U0' } }
+    transient { lot_id2  { 'L_F00CCCC-U0' } }
 
     initialize_with do
       {
@@ -25,22 +42,7 @@ FactoryBot.define do
         createdDate: "2018-07-30T17:56:59",
         facilityUrlPack: "/#{account}/api/facility/10022",
         userFieldDataList: [],
-        shipmentItemList: [
-          {
-            lotId: lot_id1,
-            facilityUrl: "/#{account}/api/facility/10022",
-            productId: "some_product_id",
-            productUrl: "/#{account}/api/product/some_product_id",
-            quantity: 1
-          },
-          {
-            lotId: lot_id2,
-            facilityUrl: "/#{account}/api/facility/10022",
-            productId: "some_product_id",
-            productUrl: "/#{account}/api/product/some_product_id",
-            quantity: 1
-          }
-        ],
+        shipmentItemList: shipment_item_list,
         contentList: [],
         transferList: [],
         statusIdHistoryList: []
