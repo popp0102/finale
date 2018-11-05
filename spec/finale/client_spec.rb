@@ -5,7 +5,7 @@ RSpec.describe Finale::Client do
   let(:client)         { Finale::Client.new('some_account') }
   let(:base_url)       { Finale::Client::BASE_URL }
   let(:order_url)      { client.instance_variable_get(:@order_url) }
-  let(:shipment_url)      { client.instance_variable_get(:@shipment_url) }
+  let(:shipment_url)   { client.instance_variable_get(:@shipment_url) }
   let(:login_url)      { client.instance_variable_get(:@login_url) }
   let(:login_headers)  { { 'Set-Cookie' =>  'JSESSIONID=some_session_id' } }
   let(:login_response) { build(:login_response) }
