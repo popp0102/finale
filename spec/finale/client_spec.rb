@@ -76,21 +76,25 @@ RSpec.describe Finale::Client do
     end
 
     describe '#get_orders' do
-      subject { client.get_orders(filter: filter) }
+      subject { client.get_orders(filter_params) }
 
       before(:each) do
         stub_request(:get, /#{order_url}/).to_return(status: 200, body: order_collection.to_json)
       end
 
       let(:order_collection) { build(:order_collection) }
-      let(:filter) { nil }
+      let(:filter_params) { {} }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to all(be_a(Finale::Order)) }
 
       context 'with lastUpdatedDate filter' do
-        let(:filter) { {lastUpdatedDate: [1.days.ago, Time.now]} }
+        let(:filter_params) { {last_updated_date: [1.days.ago, Time.now]} }
+        it { expect{subject}.to_not raise_error }
+      end
 
+      context 'with orderTypeId filter' do
+        let(:filter_params) { {order_type_id: 'SALES_ORDER'} }
         it { expect{subject}.to_not raise_error }
       end
     end
@@ -106,26 +110,29 @@ RSpec.describe Finale::Client do
       let(:shipment_response) { build(:shipment_response, id: shipment_id) }
 
       it { expect{subject}.to_not raise_error }
-      it { is_expected.to be_a(Finale::Shipment) }
-    end
+      it { is_expected.to be_a(Finale::Shipment) } end
 
 
     describe '#get_shipments' do
-      subject { client.get_shipments(filter: filter) }
+      subject { client.get_shipments(filter_params) }
 
       before(:each) do
         stub_request(:get, /#{shipment_url}/).to_return(status: 200, body: shipment_collection.to_json)
       end
 
       let(:shipment_collection) { build(:shipment_collection) }
-      let(:filter) { nil }
+      let(:filter_params) { {} }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to all(be_a(Finale::Shipment)) }
 
       context 'with lastUpdatedDate filter' do
-        let(:filter) { {lastUpdatedDate: [1.days.ago, Time.now]} }
+        let(:filter_params) { {last_updated_date: [1.days.ago, Time.now]} }
+        it { expect{subject}.to_not raise_error }
+      end
 
+      context 'with shipmentTypeId filter' do
+        let(:filter_params) { {shipment_type_id: 'SALES_SHIPMENT'} }
         it { expect{subject}.to_not raise_error }
       end
     end

@@ -40,14 +40,20 @@ module Finale
       Order.new(response)
     end
 
-    def get_orders(filter: nil)
+    def get_orders(filter: {}, order_type_id: nil, last_updated_date: nil)
+      filter.merge!(lastUpdatedDate: last_updated_date) if last_updated_date.present?
+      filter.merge!(orderTypeId: [order_type_id, order_type_id]) if order_type_id.present?
+
       resp_orders = request(verb: :GET, url: @order_url, filter: filter )
       rows        = column_major_to_row_major(resp_orders)
       orders      = rows.map { |r| Order.new(r) }
       orders
     end
 
-    def get_shipments(filter: nil)
+    def get_shipments(filter: {}, shipment_type_id: nil, last_updated_date: nil)
+      filter.merge!(lastUpdatedDate: last_updated_date) if last_updated_date.present?
+      filter.merge!(shipmentTypeId: [shipment_type_id, shipment_type_id]) if shipment_type_id.present?
+
       resp_shipments = request(verb: :GET, url: @shipment_url, filter: filter )
       rows           = column_major_to_row_major(resp_shipments)
       shipments      = rows.map { |r| Shipment.new(r) }
