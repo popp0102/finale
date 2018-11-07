@@ -30,6 +30,11 @@ module Finale
       request(verb: :LOGIN, payload: payload)
     end
 
+    def get_shipment(id)
+      response = request(verb: :GET, url: "#{@shipment_url}/#{id}")
+      Shipment.new(response)
+    end
+
     def get_order(id)
       response = request(verb: :GET, url: "#{@order_url}/#{id}")
       Order.new(response)

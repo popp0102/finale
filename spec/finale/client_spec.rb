@@ -69,7 +69,6 @@ RSpec.describe Finale::Client do
       end
 
       let(:order_id) { "12345" }
-      let(:order_ids) { build(:order_ids_response, id: order_id) }
       let(:order_response) { build(:order_response, id: order_id) }
 
       it { expect{subject}.to_not raise_error }
@@ -95,6 +94,21 @@ RSpec.describe Finale::Client do
         it { expect{subject}.to_not raise_error }
       end
     end
+
+    describe '#get_shipment' do
+      subject { client.get_shipment(shipment_id) }
+
+      before(:each) do
+        stub_request(:get, /#{shipment_url}\/#{shipment_id}/).to_return(status: 200, body: shipment_response.to_json)
+      end
+
+      let(:shipment_id) { "12345" }
+      let(:shipment_response) { build(:shipment_response, id: shipment_id) }
+
+      it { expect{subject}.to_not raise_error }
+      it { is_expected.to be_a(Finale::Shipment) }
+    end
+
 
     describe '#get_shipments' do
       subject { client.get_shipments(filter: filter) }

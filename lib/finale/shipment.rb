@@ -5,7 +5,7 @@ module Finale
     end
 
     def order_id
-      self.primaryOrderUrl.split('/')&.last
+      self.primaryOrderUrl&.split('/')&.last
     end
   end
 end
