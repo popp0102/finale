@@ -49,7 +49,7 @@ RSpec.describe Finale::Client do
 
     context 'max requests made' do
       before(:each) do
-        client.instance_variable_set(:@request_count, 100)
+        client.instance_variable_set(:@request_count, Finale::Client::REQUEST_LIMIT)
       end
 
       it { expect{subject}.to raise_error(Finale::MaxRequests) }

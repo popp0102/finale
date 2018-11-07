@@ -9,8 +9,8 @@ require_relative"shipment"
 
 module Finale
   class Client
-    MAX_REQUESTS = 100 # Finale API Usage: 'https://support.finaleinventory.com/hc/en-us/articles/115007830648-Getting-Started'
-    BASE_URL     = 'https://app.finaleinventory.com'
+    REQUEST_LIMIT = 500 # Finale API Usage: 'https://support.finaleinventory.com/hc/en-us/articles/115007830648-Getting-Started'
+    BASE_URL      = 'https://app.finaleinventory.com'
 
     def initialize(account)
       @cookies       = nil
@@ -86,7 +86,7 @@ module Finale
     end
 
     def request(verb: nil, url: nil, payload: nil, filter: nil)
-      raise MaxRequests.new(MAX_REQUESTS) if @request_count >= MAX_REQUESTS
+      raise MaxRequests.new(REQUEST_LIMIT) if @request_count >= REQUEST_LIMIT
       raise NotLoggedIn.new(verb: verb, url: url) unless verb == :LOGIN || !@cookies.nil?
 
       case verb
