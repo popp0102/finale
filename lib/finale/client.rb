@@ -9,12 +9,13 @@ require_relative"shipment"
 
 module Finale
   class Client
-    REQUEST_LIMIT = 500 # Finale API Usage: 'https://support.finaleinventory.com/hc/en-us/articles/115007830648-Getting-Started'
+    REQUEST_LIMIT = 100 # Finale API Usage: 'https://support.finaleinventory.com/hc/en-us/articles/115007830648-Getting-Started'
     BASE_URL      = 'https://app.finaleinventory.com'
 
-    def initialize(account)
+    def initialize(account: nil, throttle_mode: false)
       @cookies       = nil
       @request_count = 0
+      @throttle_mode = throttle_mode
       @account       = account
       @login_url     = construct_url(:auth)
       @order_url     = construct_url(:order)
@@ -92,7 +93,7 @@ module Finale
     end
 
     def request(verb: nil, url: nil, payload: nil, filter: nil)
-      raise MaxRequests.new(REQUEST_LIMIT) if @request_count >= REQUEST_LIMIT
+      handle_throttling if @request_count >= REQUEST_LIMIT
       raise NotLoggedIn.new(verb: verb, url: url) unless verb == :LOGIN || !@cookies.nil?
 
       case verb
@@ -115,6 +116,16 @@ module Finale
       @request_count += 1
       body = JSON.parse(response.body, symbolize_names: true)
       body
+    end
+
+    def handle_throttling
+      @request_count = 0
+
+      if @throttle_mode
+        sleep 60
+      else
+        raise MaxRequests.new(REQUEST_LIMIT)
+      end
     end
   end
 end

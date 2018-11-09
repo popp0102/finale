@@ -2,15 +2,17 @@ require 'spec_helper'
 require 'pry'
 
 RSpec.describe Finale::Client do
-  let(:client)         { Finale::Client.new('some_account') }
+  let(:client)         { Finale::Client.new(account: 'some_account', throttle_mode: throttle_mode) }
+  let(:throttle_mode)  { false }
   let(:base_url)       { Finale::Client::BASE_URL }
   let(:order_url)      { client.instance_variable_get(:@order_url) }
   let(:shipment_url)   { client.instance_variable_get(:@shipment_url) }
   let(:login_url)      { client.instance_variable_get(:@login_url) }
-  let(:login_headers)  { { 'Set-Cookie' =>  'JSESSIONID=some_session_id' } }
-  let(:login_response) { build(:login_response) }
 
   before(:each) do
+    login_headers  = {'Set-Cookie' => 'JSESSIONID=some_session_id' }
+    login_response = build(:login_response)
+
     stub_request(:post, login_url).to_return(status: 200, body: login_response.to_json, headers: login_headers)
   end
 
@@ -21,7 +23,6 @@ RSpec.describe Finale::Client do
     let(:password) { 'some_password' }
 
     it { expect{subject}.to_not raise_error }
-
     it 'should set cookies' do
       subject
       expect(client.instance_variable_get(:@cookies)).to_not be_nil
@@ -41,18 +42,58 @@ RSpec.describe Finale::Client do
   end
 
   describe '#request' do
-    subject { client.send(:request, verb: :GET, url: 'some_url', payload: {}) }
+    subject { client.send(:request, verb: verb, url: 'some_url', payload: {}) }
 
     context 'not logged in yet' do
+      let(:verb) { :GET }
       it { expect{subject}.to raise_error(Finale::NotLoggedIn) }
     end
 
     context 'max requests made' do
+      let(:verb) { :LOGIN }
       before(:each) do
         client.instance_variable_set(:@request_count, Finale::Client::REQUEST_LIMIT)
       end
 
+      it 'should call handle_throttle' do
+        expect(client).to receive(:handle_throttling)
+        subject
+      end
+    end
+  end
+
+  context '#handle_throttling' do
+    subject { client.send(:handle_throttling) }
+
+    context 'Throttle Mode On' do
+      let(:throttle_mode) { true }
+
+      before(:each) do
+        allow_any_instance_of(Kernel).to receive(:sleep)
+        client.instance_variable_set(:@request_count, Finale::Client::REQUEST_LIMIT)
+      end
+
+      it { expect{subject}.to_not raise_error }
+      it 'should sleep' do
+        expect_any_instance_of(Kernel).to receive(:sleep)
+        subject
+      end
+      it 'should reset request_count' do
+        subject
+        request_count = client.instance_variable_get(:@request_count)
+        expect(request_count).to eq(0)
+      end
+    end
+
+    context 'Throttle Mode On' do
+      let(:throttle_mode) { false }
+
       it { expect{subject}.to raise_error(Finale::MaxRequests) }
+      it 'should reset request_count' do
+        expect{subject}.to raise_error(Finale::MaxRequests)
+        request_count = client.instance_variable_get(:@request_count)
+        expect(request_count).to eq(0)
+      end
     end
   end
 
