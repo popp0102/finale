@@ -9,4 +9,3 @@ module Finale
     end
   end
 end
-

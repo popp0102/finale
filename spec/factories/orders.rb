@@ -5,7 +5,7 @@ FactoryBot.define do
     order_response { build(:order_response, shipment_id1: shipment_id1, shipment_id2: shipment_id2) }
 
     initialize_with do
-     new(order_response)
+      new(order_response)
     end
   end
 end

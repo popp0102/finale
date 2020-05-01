@@ -7,7 +7,7 @@ FactoryBot.define do
     end
 
     initialize_with do
-     new(shipment_response)
+      new(shipment_response)
     end
   end
 end
