@@ -7,7 +7,7 @@ RSpec.describe Finale::Client do
 
   before(:each) do
     login_headers  = { 'Set-Cookie' => 'JSESSIONID=some_session_id' }
-    login_response = build(:login_response)
+    login_response = build(:finale_login_response)
 
     stub_request(:post, /.*\/auth/).to_return(status: 200, body: login_response.to_json, headers: login_headers)
   end
@@ -57,8 +57,6 @@ RSpec.describe Finale::Client do
         subject
       end
     end
-
-
   end
 
   context '#handle_throttling' do
@@ -110,7 +108,7 @@ RSpec.describe Finale::Client do
       end
 
       let(:order_id) { "12345" }
-      let(:order_response) { build(:order_response, id: order_id) }
+      let(:order_response) { build(:finale_order_response, id: order_id) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Finale::Order) }
@@ -123,7 +121,7 @@ RSpec.describe Finale::Client do
         stub_request(:get, /.*\/order/).to_return(status: 200, body: order_collection.to_json)
       end
 
-      let(:order_collection) { build(:order_collection) }
+      let(:order_collection) { build(:finale_order_collection) }
       let(:filter_params) { {} }
 
       it { expect{subject}.to_not raise_error }
@@ -148,7 +146,7 @@ RSpec.describe Finale::Client do
       end
 
       let(:shipment_id) { "12345" }
-      let(:shipment_response) { build(:shipment_response, id: shipment_id) }
+      let(:shipment_response) { build(:finale_shipment_response, id: shipment_id) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Finale::Shipment) } end
@@ -161,7 +159,7 @@ RSpec.describe Finale::Client do
         stub_request(:get, /.*\/shipment/).to_return(status: 200, body: shipment_collection.to_json)
       end
 
-      let(:shipment_collection) { build(:shipment_collection) }
+      let(:shipment_collection) { build(:finale_shipment_collection) }
       let(:filter_params) { {} }
 
       it { expect{subject}.to_not raise_error }
@@ -192,10 +190,10 @@ RSpec.describe Finale::Client do
       let(:shipment_id_1) { '11111' }
       let(:shipment_id_2) { '11112' }
 
-      let(:shipment_response_1) { build(:shipment_response, id: shipment_id_1) }
-      let(:shipment_response_2) { build(:shipment_response, id: shipment_id_2) }
+      let(:shipment_response_1) { build(:finale_shipment_response, id: shipment_id_1) }
+      let(:shipment_response_2) { build(:finale_shipment_response, id: shipment_id_2) }
 
-      let(:order) { build(:order, shipment_id1: shipment_id_1, shipment_id2: shipment_id_2) }
+      let(:order) { build(:finale_order, shipment_id1: shipment_id_1, shipment_id2: shipment_id_2) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Array) }
@@ -209,8 +207,8 @@ RSpec.describe Finale::Client do
         stub_request(:get, /.*\/order/).to_return(status: 200, body: order.to_json)
       end
 
-      let(:order) { build(:order) }
-      let(:shipment) { build(:shipment, order_id: order.orderId) }
+      let(:order) { build(:finale_order) }
+      let(:shipment) { build(:finale_shipment, order_id: order.orderId) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Finale::Order) }
@@ -223,7 +221,7 @@ RSpec.describe Finale::Client do
         stub_request(:get, /.*\/facility/).to_return(status: 200, body: facility_collection.to_json)
       end
 
-      let(:facility_collection) { build(:facility_collection) }
+      let(:facility_collection) { build(:finale_facility_collection) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to all(be_a(Finale::Facility)) }
@@ -237,12 +235,12 @@ RSpec.describe Finale::Client do
       end
 
       let(:order_id) { 'some_id' }
-      let(:item1) { build(:shipment_item, product_id: 'product_1', facility_id: 'facility_1', quantity: 1, lot_id: 'L_F0AAAAA-U0') }
-      let(:item2) { build(:shipment_item, product_id: 'product_2', facility_id: 'facility_1', quantity: 1, lot_id: 'F0BBBBB-U0') }
-      let(:item3) { build(:shipment_item, product_id: 'product_3', facility_id: 'facility_3', quantity: 3) }
+      let(:item1) { build(:finale_shipment_item, product_id: 'product_1', facility_id: 'facility_1', quantity: 1, lot_id: 'L_F0AAAAA-U0') }
+      let(:item2) { build(:finale_shipment_item, product_id: 'product_2', facility_id: 'facility_1', quantity: 1, lot_id: 'F0BBBBB-U0') }
+      let(:item3) { build(:finale_shipment_item, product_id: 'product_3', facility_id: 'facility_3', quantity: 3, lot_id: nil) }
       let(:items) { [item1, item2, item3] }
 
-      let(:response) { build(:shipment_response) }
+      let(:response) { build(:finale_shipment_response) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Finale::Shipment) }
@@ -255,7 +253,7 @@ RSpec.describe Finale::Client do
         stub_request(:post, /.*\/shipment\/.*\/pack/).to_return(status: 200, body: shipment.to_json)
       end
 
-      let(:shipment) { build(:shipment) }
+      let(:shipment) { build(:finale_shipment) }
 
       it { expect{subject}.to_not raise_error }
       it { is_expected.to be_a(Finale::Shipment) }

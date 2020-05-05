@@ -1,24 +1,27 @@
 require 'spec_helper'
 
 RSpec.describe Finale::Order do
-  let(:order_response) { build(:order_response) }
-
-  describe '#initialize' do
+  describe '#initialize from an order_response' do
     subject { Finale::Order.new(order_response) }
 
+    let(:order_response) { build(:finale_order_response) }
+
     it { expect{subject}.to_not raise_error }
+    it { expect(subject.orderId).to be_a(String) }
+    it { expect(subject.saleSourceId).to be_a(String) }
+    it { expect(subject.shipmentUrlList).to be_an(Array) }
+  end
 
-    it 'should have an id' do
-      expect(subject.orderId).to be_an(String)
-    end
+  describe 'using the factory' do
+    subject { build(:finale_order) }
 
-    it 'should have a source' do
-      expect(subject.saleSourceId).to be_a(String)
-    end
+    it { is_expected.to be_a(Finale::Order) }
 
-    it 'should have shipment_urls' do
-      expect(subject.shipmentUrlList).to be_an(Array)
+    context 'specifying values' do
+      subject { build(:finale_order, options: { saleSourceId: 'My Store' }) }
+
+      it { expect(subject.saleSourceId).to eql('My Store') }
+      it { is_expected.to be_a(Finale::Order) }
     end
   end
 end
-

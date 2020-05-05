@@ -1,7 +1,13 @@
 require 'simplecov'
 
 SimpleCov.start do
-  add_filter 'spec'
+  add_filter do |source_file|
+    if (source_file.filename.match? 'client_mock.rb')
+      false
+    else
+      source_file.filename.match? '/spec/'
+    end
+  end
   enable_coverage :branch
 end
 

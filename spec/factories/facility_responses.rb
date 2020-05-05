@@ -1,7 +1,8 @@
 FactoryBot.define do
-  factory :facility_response, class: Hash do
-    id      { '10001' }
-    account { 'some_account' }
+  factory :finale_facility_response, class: Hash do
+    sequence(:id, 10001)       { |n| n.to_s }
+    sequence(:facilityName, 1) { |n| "Warehouse #{n}" }
+    account                    { 'some_account' }
 
     initialize_with do
       {
@@ -20,7 +21,7 @@ FactoryBot.define do
           postalCode: '12345',
           countryGeoId: 'USA'
         },
-        facilityName: 'A Warehouse',
+        facilityName: facilityName,
         parentFacilityUrl: "/#{account}/api/facility/10000",
         shippingDisabled: nil,
         actionUrlActivate: nil,
@@ -29,7 +30,7 @@ FactoryBot.define do
     end
   end
 
-  factory :facility_collection, class: Hash do
+  factory :finale_facility_collection, class: Hash do
     account      { 'some_account' }
     facility_id1 { '10000' }
     facility_id2 { '10001' }
@@ -66,4 +67,3 @@ FactoryBot.define do
     end
   end
 end
-
