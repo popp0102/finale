@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'pry'
 
 RSpec.describe Finale::ClientMock do
   let(:client) { Finale::ClientMock.new(account: 'some_account') }

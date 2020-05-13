@@ -5,13 +5,6 @@ RSpec.describe Finale::Client do
   let(:client)        { Finale::Client.new(account: 'some_account', throttle_mode: throttle_mode) }
   let(:throttle_mode) { false }
 
-  before(:each) do
-    login_headers  = { 'Set-Cookie' => 'JSESSIONID=some_session_id' }
-    login_response = build(:finale_login_response)
-
-    stub_request(:post, /.*\/auth/).to_return(status: 200, body: login_response.to_json, headers: login_headers)
-  end
-
   describe '#login' do
     subject { client.login(username: username, password: password) }
 

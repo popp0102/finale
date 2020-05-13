@@ -1,18 +1,20 @@
-require "rest-client"
-require "json"
-require "base64"
-require "active_support/all"
+require 'rest-client'
+require 'json'
+require 'base64'
+require 'active_support/all'
 
-require_relative"errors"
-require_relative"facility"
-require_relative"order"
-require_relative"shipment"
-require_relative"shipment_item"
+require_relative 'errors'
+require_relative 'facility'
+require_relative 'order'
+require_relative 'shipment'
+require_relative 'shipment_item'
+require_relative 'uri_helper'
 
 module Finale
   class Client
+    include URIHelper
+
     REQUEST_LIMIT = 100 # Finale API Usage: 'https://support.finaleinventory.com/hc/en-us/articles/115007830648-Getting-Started'
-    BASE_URL      = 'https://app.finaleinventory.com'
 
     def initialize(account: nil, throttle_mode: false)
       @cookies       = nil
@@ -31,13 +33,13 @@ module Finale
     end
 
     def get_shipment(id)
-      url = resource_url(:shipment) + '/' + id
+      url = url(:shipment, id: id)
       response = request(verb: :GET, url: url)
       Shipment.new(response)
     end
 
     def get_order(id)
-      url = resource_url(:order) + '/' + id
+      url = url(:order, id: id)
       response = request(verb: :GET, url: url)
       Order.new(response)
     end
@@ -46,7 +48,7 @@ module Finale
       filter.merge!(lastUpdatedDate: last_updated_date) if last_updated_date.present?
       filter.merge!(orderTypeId: [order_type_id, order_type_id]) if order_type_id.present?
 
-      url      = resource_url(:order)
+      url      = url(:order)
       response = request(verb: :GET, url: url, filter: filter )
       rows     = column_major_to_row_major(response)
 
@@ -57,7 +59,7 @@ module Finale
       filter.merge!(lastUpdatedDate: last_updated_date) if last_updated_date.present?
       filter.merge!(shipmentTypeId: [shipment_type_id, shipment_type_id]) if shipment_type_id.present?
 
-      url      = resource_url(:shipment)
+      url      = url(:shipment)
       response = request(verb: :GET, url: url, filter: filter )
       rows     = column_major_to_row_major(response)
 
@@ -77,7 +79,7 @@ module Finale
     end
 
     def get_facilities
-      url      = resource_url(:facility)
+      url      = url(:facility)
       response = request(verb: :GET, url: url)
       rows     = column_major_to_row_major(response)
 
@@ -85,7 +87,7 @@ module Finale
     end
 
     def create_shipment_for_order(order_id, items)
-      order_url = @account + '/api/order/' + order_id
+      order_url = resource_path(:order, id: order_id)
       shipment_items = items.map { |item| item.format_for_post(@account) }
 
       payload = {
@@ -95,14 +97,14 @@ module Finale
         shipmentUrl: nil
       }
 
-      url      = resource_url(:shipment)
+      url      = url(:shipment)
       response = request(verb: :POST, payload: payload, url: url)
 
       Shipment.new(response)
     end
 
     def pack_shipment(shipment)
-      url = BASE_URL + shipment.actionUrlPack
+      url = url_from_path(shipment.actionUrlPack)
       response = request(verb: :POST, url: url)
 
       Shipment.new(response)
@@ -123,17 +125,13 @@ module Finale
       row_major
     end
 
-    def resource_url(resource)
-      "#{BASE_URL}/#{@account}/api/#{resource}"
-    end
-
     def request(verb: nil, url: nil, payload: nil, filter: nil)
       handle_throttling if @request_count >= REQUEST_LIMIT
       raise NotLoggedIn.new(verb: verb, url: url) unless verb == :LOGIN || !@cookies.nil?
 
       case verb
       when :LOGIN
-        url = resource_url(:auth)
+        url = url(:auth)
         response = RestClient.post(url, payload)
         @cookies = response.cookies
       when :GET
