@@ -1,25 +1,26 @@
-require "rest-client"
-require "json"
-require "base64"
-require "active_support/all"
+require 'rest-client'
+require 'json'
+require 'base64'
+require 'active_support/all'
 
-require_relative"errors"
-require_relative"order"
-require_relative"shipment"
+require_relative 'errors'
+require_relative 'facility'
+require_relative 'order'
+require_relative 'shipment'
+require_relative 'shipment_item'
+require_relative 'uri_helper'
 
 module Finale
   class Client
+    include URIHelper
+
     REQUEST_LIMIT = 100 # Finale API Usage: 'https://support.finaleinventory.com/hc/en-us/articles/115007830648-Getting-Started'
-    BASE_URL      = 'https://app.finaleinventory.com'
 
     def initialize(account: nil, throttle_mode: false)
       @cookies       = nil
       @request_count = 0
       @throttle_mode = throttle_mode
       @account       = account
-      @login_url     = construct_url(:auth)
-      @order_url     = construct_url(:order)
-      @shipment_url  = construct_url(:shipment)
     end
 
     def login(username: nil, password: nil)
@@ -32,12 +33,14 @@ module Finale
     end
 
     def get_shipment(id)
-      response = request(verb: :GET, url: "#{@shipment_url}/#{id}")
+      url = url(:shipment, id: id)
+      response = request(verb: :GET, url: url)
       Shipment.new(response)
     end
 
     def get_order(id)
-      response = request(verb: :GET, url: "#{@order_url}/#{id}")
+      url = url(:order, id: id)
+      response = request(verb: :GET, url: url)
       Order.new(response)
     end
 
@@ -45,20 +48,22 @@ module Finale
       filter.merge!(lastUpdatedDate: last_updated_date) if last_updated_date.present?
       filter.merge!(orderTypeId: [order_type_id, order_type_id]) if order_type_id.present?
 
-      resp_orders = request(verb: :GET, url: @order_url, filter: filter )
-      rows        = column_major_to_row_major(resp_orders)
-      orders      = rows.map { |r| Order.new(r) }
-      orders
+      url      = url(:order)
+      response = request(verb: :GET, url: url, filter: filter )
+      rows     = column_major_to_row_major(response)
+
+      rows.map { |r| Order.new(r) }
     end
 
     def get_shipments(filter: {}, shipment_type_id: nil, last_updated_date: nil)
       filter.merge!(lastUpdatedDate: last_updated_date) if last_updated_date.present?
       filter.merge!(shipmentTypeId: [shipment_type_id, shipment_type_id]) if shipment_type_id.present?
 
-      resp_shipments = request(verb: :GET, url: @shipment_url, filter: filter )
-      rows           = column_major_to_row_major(resp_shipments)
-      shipments      = rows.map { |r| Shipment.new(r) }
-      shipments
+      url      = url(:shipment)
+      response = request(verb: :GET, url: url, filter: filter )
+      rows     = column_major_to_row_major(response)
+
+      rows.map { |r| Shipment.new(r) }
     end
 
     def get_order_from_shipment(shipment)
@@ -67,10 +72,42 @@ module Finale
 
     def get_shipments_from_order(order)
       (order.shipmentUrlList || []).map do |suffix_url|
-        url      = "#{BASE_URL}#{suffix_url}"
+        url      = BASE_URL + suffix_url
         response = request(verb: :GET, url: url)
         Shipment.new(response)
       end
+    end
+
+    def get_facilities
+      url      = url(:facility)
+      response = request(verb: :GET, url: url)
+      rows     = column_major_to_row_major(response)
+
+      rows.map { |r| Facility.new(r) }
+    end
+
+    def create_shipment_for_order(order_id, items)
+      order_url = resource_path(:order, id: order_id)
+      shipment_items = items.map { |item| item.format_for_post(@account) }
+
+      payload = {
+        primaryOrderUrl: order_url,
+        shipmentItemList: shipment_items,
+        shipmentTypeId: 'SALES_SHIPMENT',
+        shipmentUrl: nil
+      }
+
+      url      = url(:shipment)
+      response = request(verb: :POST, payload: payload, url: url)
+
+      Shipment.new(response)
+    end
+
+    def pack_shipment(shipment)
+      url = url_from_path(shipment.actionUrlPack)
+      response = request(verb: :POST, url: url)
+
+      Shipment.new(response)
     end
 
     private
@@ -88,17 +125,14 @@ module Finale
       row_major
     end
 
-    def construct_url(resource)
-      "#{BASE_URL}/#{@account}/api/#{resource}"
-    end
-
     def request(verb: nil, url: nil, payload: nil, filter: nil)
       handle_throttling if @request_count >= REQUEST_LIMIT
       raise NotLoggedIn.new(verb: verb, url: url) unless verb == :LOGIN || !@cookies.nil?
 
       case verb
       when :LOGIN
-        response = RestClient.post(@login_url, payload)
+        url = url(:auth)
+        response = RestClient.post(url, payload)
         @cookies = response.cookies
       when :GET
         params = {}
@@ -110,12 +144,13 @@ module Finale
 
         response = RestClient.get(url, cookies: @cookies, params: params)
       when :POST
-        response = RestClient.post(url, cookies: @cookies)
+        payload ||= {}
+        payload.merge!(sessionSecret: @cookies.dig('JSESSIONID'))
+        response = RestClient.post(url, payload.to_json, cookies: @cookies)
       end
 
       @request_count += 1
-      body = JSON.parse(response.body, symbolize_names: true)
-      body
+      JSON.parse(response.body, symbolize_names: true)
     end
 
     def handle_throttling
