@@ -1,5 +1,3 @@
-require 'factory_bot'
-
 module Finale
   class TestSupport
     def self.load_definitions
