@@ -14,7 +14,7 @@ module Finale
     def format_for_post(account)
       {
         productUrl: resource_path(:product, account: account, id: @product_id),
-        facilityUrl: resource_path(:facility, account: account, id: @facility_id),
+        facilityUrl: resource_path(:facility, account: account, id: @facility_id, leading_slash: true),
         quantity: @quantity,
         lotId: @lot_id&.rjust(12, 'L_') # L_F0137A3-U0
       }.compact

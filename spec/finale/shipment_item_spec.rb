@@ -13,7 +13,7 @@ RSpec.describe Finale::ShipmentItem do
     let(:expected) {
       {
         productUrl: 'account/api/product/product_1',
-        facilityUrl: 'account/api/facility/facility_1',
+        facilityUrl: '/account/api/facility/facility_1',
         quantity: 1,
         lotId: 'L_F0AAAAA-U0'
       }
@@ -32,7 +32,7 @@ RSpec.describe Finale::ShipmentItem do
       let(:expected) {
         {
           productUrl: 'account/api/product/product_1',
-          facilityUrl: 'account/api/facility/facility_1',
+          facilityUrl: '/account/api/facility/facility_1',
           quantity: 1
         }
       }

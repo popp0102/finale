@@ -11,8 +11,10 @@ module Finale
       "#{url_base}/#{resource_path}"
     end
 
-    def resource_path(resource, account: @account, id: nil, action: nil)
-      [account, 'api', resource, id, action].compact.join('/')
+    def resource_path(resource, account: @account, id: nil, action: nil, leading_slash: false)
+      path = [account, 'api', resource, id, action].compact.join('/')
+      path = leading_slash ? "/#{path}" : path
+      path
     end
   end
 end
