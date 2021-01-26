@@ -8,7 +8,9 @@ module Finale
     end
 
     def url_from_path(resource_path, url_base: BASE_URL)
-      "#{url_base}/#{resource_path}"
+      resource_path_parts = resource_path.split("/").reject(&:empty?)
+      full_path_parts     = [url_base] + resource_path_parts
+      full_path_parts.join("/")
     end
 
     def resource_path(resource, account: @account, id: nil, action: nil, leading_slash: false)
