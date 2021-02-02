@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :login_response, class: Hash do
+  factory :finale_login_response, class: Hash do
     initialize_with do
       {
         name: "some_user@some_account.com",
@@ -8,4 +8,3 @@ FactoryBot.define do
     end
   end
 end
-

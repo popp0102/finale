@@ -1,14 +1,13 @@
 FactoryBot.define do
-  factory :shipment, class: Finale::Shipment do
-    shipment_response { build(:shipment_response, order_id: order_id) }
-
+  factory :finale_shipment, class: Finale::Shipment do
     transient do
-      order_id { '11111' }
+      options { {} }
     end
 
+    shipment_response { build(:finale_shipment_response, **options) }
+
     initialize_with do
-     new(shipment_response)
+      new(shipment_response)
     end
   end
 end
-
